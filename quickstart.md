@@ -1,10 +1,14 @@
 # Sweep Pro — Quickstart & Keymap Reference
 
-A visual reference for the **Sweep Pro** ZMK firmware: every layer diagrammed,
-plus where the e-ink display, trackpad, and rotary encoders live and how to tune them.
+A visual reference for the **Sweep Pro** ZMK firmware (chocofy layout):
+every layer diagrammed, plus where the e-ink display, trackpad, and rotary encoders live.
 
 All behavior is in **`config/sweep.keymap`**. Hardware wiring is in
 **`boards/shields/sweep/`**. Compile-time toggles are in **`config/*.conf`**.
+
+> **Chocofy layout note:** the keymap here is ported from a Corne config.
+> See **`CHOCOFY_CHANGES.md`** for what changed and what was lost versus the
+> original Sweep keymap. Notably: **no home-row mods on Base** (plain keys).
 
 ---
 
@@ -13,11 +17,11 @@ All behavior is in **`config/sweep.keymap`**. Hardware wiring is in
 | | |
 |---|---|
 | **Board** | nice!nano (nRF52840), split BLE (left = central, right = peripheral) |
-| **Keys** | 36 total — 3 rows × 10 (split 5 \| 5) + 1 thumb row × 6 (split 3 \| 3) |
-| **Encoders** | 2 × ALPS EC11 (one per half) |
+| **Keys** | 34 — 3 rows × 10 (split 5 \| 5) + **4 thumb keys** (2 per side) |
+| **Encoders** | 2 × ALPS EC11 — **one outside each thumb cluster** (shown as `↻`) |
 | **Trackpad** | Cirque Pinnacle II (right half, I²C) |
 | **Display** | SSD1680 e-ink, 152×152 (left half, SPI) |
-| **Layers** | 6 — `DEF` `WIN` `NUM` `SYM` `FUN` `MSE` |
+| **Layers** | 7 — `Base` `Symb` `Num` `Nav` `Func` `BT` `Mouse` |
 
 ### Build variants (`build.yaml`)
 
@@ -33,198 +37,217 @@ All behavior is in **`config/sweep.keymap`**. Hardware wiring is in
 
 ## How to read these diagrams
 
-Each layer is drawn as two 5-key halves with a gap (where the split sits),
-plus a centered 3-key thumb cluster per side.
+Each layer is two 5-key halves with a gap (the split), plus a centered
+**2+2 thumb cluster flanked by the two encoders** (`↻`).
 
-### Cell glyphs
+Empty cells are unused (`&none`). The thumb diagram always shows both encoders
+even when a layer leaves a thumb blank.
+
+### Modifier glyphs
 
 | Glyph | Meaning |
 |---|---|
-| `·` | transparent — falls through to the active base layer |
-| `Q`, `,`, `⏎` | plain keypress (`&kp`) |
-| `S⌥` `D⌃` `F⌘` | **home-row mod** — tap the letter, hold for the modifier (`⌥` Alt `⌃` Ctrl `⌘` Cmd) |
-| `Z‖` | tap `Z`, hold = **drag-scroll** (the trackpad scrolls) |
-| `X●` | tap `X`, hold = **left mouse click** (so you can drag-select) |
-| `⇥SYM` `⇥NUM` | **layer-tap** — tap = `Tab`, hold = that layer |
-| `⊕MSE` `⊕WIN` | **toggle** that layer on/off |
-| `Std` | ZMK Studio unlock (live keymap editing over USB) |
-| `Rpt` | custom report behavior (`&default_report`) |
+| `⇧` `⌃` `⌥` `⌘` | Shift / Ctrl / Alt / Cmd (plain `&kp`) |
+| `s⌥` `s⌃` | **sticky** Alt / Ctrl (`&sk`) — tap, then the next keypress is modified |
+| `⇧⌘` `⌃⌥⌘` | chorded mods (`LS(LGUI)` = Shift+Cmd, `LC(LA(LGUI))` = Ctrl+Alt+Cmd) |
+| `⌘Z` `⌘X` … | Cmd+key combos (`LG(Z)` etc.) |
 
-### Media / system glyphs
+> **No home-row mods** — every alpha is a plain key. Mods only appear as
+> dedicated keys or sticky keys, never on hold of a letter.
 
+### Layer & action glyphs
+
+| Glyph | Meaning |
+|---|---|
+| `Num` `Sym` `Func` | **momentary layer** (`&mo`) — hold the key to activate |
+| `␣/N` | **layer-tap** (`&hltk`) — tap = Space (`␣`), hold = Nav |
+| `⊙MSE` | **toggle** Mouse layer on/off (`&tog`) |
+| `→BT` `→Def` | **switch-to** layer (`&to`) |
+| `↻` | rotary encoder (outside each thumb cluster) |
+| `BT0`–`BT4` | select bluetooth slot · `BTclr` clear pairings |
+
+### Navigation / media glyphs
+
+`← ↑ ↓ →` arrows · `⇥` Tab · `⏎` Enter · `Bsp` Backspace · `Cps` Caps ·
 `🔇` mute · `Vol+`/`Vol−` volume · `Bri+`/`Bri−` brightness ·
-`⏮` `⏯` `⏭` prev / play-pause / next · `⏻` soft-off · `Out⊕` toggle USB↔BT output ·
-`BT0`–`BT4` select bluetooth slot · `BTclr` clear pairings
+`F1`–`F12` function keys
 
-### Navigation glyphs
-
-`← ↑ ↓ →` arrows · `Hm`/`End` Home/End · `⇞`/`⇟` Page Up/Down · `⎋` Esc · `⇥` Tab · `⏎` Enter
-
-### Mouse-layer glyphs (MSE only)
+### Mouse-layer glyphs (Mouse only)
 
 | Glyph | Meaning |
 |---|---|
 | `MB4` `MB5` | mouse back / forward buttons |
 | `Mclk` `Lclk` `Rclk` | middle / left / right click |
 | `Sc← ↓ ↑ →` | trackpad **scroll** in that direction |
-| `Mv← ↓ ↑ →` | trackpad **move** (accelerated cursor) in that direction |
+| `Mv← ↓ ↑ →` | trackpad **move** (accelerated cursor) |
 | `Pf−` `Pf+` | pointer speed **fine** down / up |
 | `Sf−` `Sf+` | scroll speed **fine** down / up |
-| `P=0` `S=0` | reset pointer / scroll speed to default |
-| `Mod⊕` | toggle Cirque trackpad mode (absolute ⇄ relative) |
+| `Mod⊙` | toggle Cirque trackpad mode (absolute ⇄ relative) |
 
 ---
 
 ## Layers
 
-### Layer DEF — default (Mac)
-QWERTY with Mac-order home-row mods. This is the power-on layer.
-
-```
-┌──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┐
-│  Q   │  W   │  E   │  R   │  T   │   │  Y   │  U   │  I   │  O   │  P   │
-├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│  A   │  S⌥  │  D⌃  │  F⌘  │  G   │   │  H   │  J⌘  │  K⌃  │  L⌥  │ Bsp  │
-├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│  Z‖  │  X●  │  C   │  V   │  B   │   │  N   │  M   │  ,   │  .   │  ⏎   │
-└──────┴──────┴──────┴──────┴──────┘   └──────┴──────┴──────┴──────┴──────┘
-              ┌──────┬──────┬──────┐   ┌──────┬──────┬──────┐
-              │  🔇  │ ⇥SYM │  ⇧   │   │  ␣   │ ⇥NUM │ Std  │
-              └──────┴──────┴──────┘   └──────┴──────┴──────┘
-```
-**Encoders** — left: Vol− / Vol+ · right: Bri− / Bri+
-
-### Layer WIN — Windows
-Identical to DEF, but home-row mods use Windows order (Ctrl ⇄ Win swapped):
-`D⌘` `F⌃` on the left, `J⌃` `K⌘` on the right. Toggle to it from the FUN layer (`⊕WIN`).
-
-```
-┌──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┐
-│  Q   │  W   │  E   │  R   │  T   │   │  Y   │  U   │  I   │  O   │  P   │
-├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│  A   │  S⌥  │  D⌘  │  F⌃  │  G   │   │  H   │  J⌃  │  K⌘  │  L⌥  │ Bsp  │
-├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│  Z‖  │  X●  │  C   │  V   │  B   │   │  N   │  M   │  ,   │  .   │  ⏎   │
-└──────┴──────┴──────┴──────┴──────┘   └──────┴──────┴──────┴──────┴──────┘
-              ┌──────┬──────┬──────┐   ┌──────┬──────┬──────┐
-              │  🔇  │ ⇥SYM │  ⇧   │   │  ␣   │ ⇥NUM │ Std  │
-              └──────┴──────┴──────┘   └──────┴──────┴──────┘
-```
-**Encoders** — left: Vol− / Vol+ · right: Bri− / Bri+
-
-### Layer NUM — numbers & navigation
-Hold the **right thumb `⇥NUM`** to enter. Left side = editing keys, right side = a full nav cluster.
+### Layer Base — default (QWERTY, no home-row mods)
+The power-on layer. Plain alphas; sticky Alt (`s⌥`) and sticky Ctrl (`s⌃`) on the
+outer top/bottom-right. Thumbs reach Num / Nav (left) and Shift / Sym (right).
 
 ```
 ┌─────┬─────┬─────┬─────┬─────┐   ┌─────┬─────┬─────┬─────┬─────┐
-│  1  │  2  │  3  │  4  │  5  │   │  6  │  7  │  8  │  9  │  0  │
+│  Q  │  W  │  E  │  R  │  T  │   │  Y  │  U  │  I  │ s⌥  │ Bsp │
 ├─────┼─────┼─────┼─────┼─────┤   ├─────┼─────┼─────┼─────┼─────┤
-│ Del │ Cps │ PSc │ Ins │  ·  │   │  ←  │  ↓  │  ↑  │  →  │  ·  │
+│  A  │  S  │  D  │  F  │  G  │   │  H  │  N  │  K  │  O  │  L  │
 ├─────┼─────┼─────┼─────┼─────┤   ├─────┼─────┼─────┼─────┼─────┤
-│  ·  │  ·  │  ·  │  ·  │  ·  │   │ Hm  │  ⇟  │  ⇞  │ End │  ·  │
+│  Z  │  X  │  C  │  V  │  B  │   │  J  │  M  │  P  │ s⌃  │ Cps │
 └─────┴─────┴─────┴─────┴─────┘   └─────┴─────┴─────┴─────┴─────┘
-            ┌─────┬─────┬─────┐   ┌─────┬─────┬─────┐
-            │  🔇 │  ·  │  ⎋  │   │  ·  │  ·  │ Std │
-            └─────┴─────┴─────┘   └─────┴─────┴─────┘
+         ┌─────┐   ┌─────┬─────┐   ┌─────┬─────┐   ┌─────┐
+         │  ↻  │   │ Num │ ␣/N │   │  ⇧  │ Sym │   │  ↻  │
+         └─────┘   └─────┴─────┘   └─────┴─────┘   └─────┘
 ```
-**Encoders** — left: Vol− / Vol+ · right: Bri− / Bri+
+**Encoders** — Vol−/+ · Bri−/+
 
-### Layer SYM — symbols & punctuation
-Hold the **left thumb `⇥SYM`** to enter. The `Rpt` key invokes the custom report behavior.
+### Layer Symb — symbols & punctuation  *(hold Sym thumb)*
 
 ```
 ┌──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┐
-│  !   │  @   │  #   │  $   │  %   │   │  ^   │  &   │  *   │  `   │  ~   │
+│  ~   │  @   │  +   │  ^   │      │   │      │  $   │  =   │  :   │      │
 ├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│  “   │  [   │  {   │  (   │ Rpt  │   │  /   │  −   │  =   │  :   │  ;   │
+│  /   │  !   │  ,   │  .   │  *   │   │  #   │  “   │  ‘   │  |   │  ;   │
 ├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│  ‘   │  ]   │  }   │  )   │  ·   │   │  \   │  _   │  +   │  |   │  ?   │
+│  \   │  _   │  −   │  &   │      │   │      │  %   │  ?   │  `   │      │
 └──────┴──────┴──────┴──────┴──────┘   └──────┴──────┴──────┴──────┴──────┘
-              ┌──────┬──────┬──────┐   ┌──────┬──────┬──────┐
-              │  🔇  │  ·   │  ·   │   │ ⊕MSE │  ·   │ Std  │
-              └──────┴──────┴──────┘   └──────┴──────┴──────┘
+            ┌──────┐   ┌──────┬──────┐   ┌──────┬──────┐   ┌──────┐
+            │  ↻   │   │ Func │  ␣   │   │ ⊙MSE │      │   │  ↻   │
+            └──────┘   └──────┴──────┘   └──────┴──────┘   └──────┘
 ```
-**Encoders** — left: Vol− / Vol+ · right: Bri− / Bri+
+**Encoders** — Vol−/+ · Bri−/+
 
-### Layer FUN — function keys, bluetooth & system
-**Auto-activated** when both `⇥SYM` and `⇥NUM` are held (tri-layer conditional).
-Bluetooth slots, output toggle, media transport, and soft-off live here.
+### Layer Num — numbers & brackets  *(hold Num thumb)*
+
+```
+┌──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┐
+│  +   │  1   │  2   │  3   │  ,   │   │      │  <   │  >   │  =   │      │
+├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
+│  0   │  4   │  5   │  6   │  .   │   │  {   │  (   │  )   │  }   │  ⌥N  │
+├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
+│  ⇧⌘  │  7   │  8   │  9   │  −   │   │      │  [   │  ]   │      │      │
+└──────┴──────┴──────┴──────┴──────┘   └──────┴──────┴──────┴──────┴──────┘
+            ┌──────┐   ┌──────┬──────┐   ┌──────┬──────┐   ┌──────┐
+            │  ↻   │   │      │      │   │ Func │      │   │  ↻   │
+            └──────┘   └──────┴──────┘   └──────┴──────┘   └──────┘
+```
+**Encoders** — Vol−/+ · Bri−/+
+
+### Layer Nav — navigation & window management  *(hold `␣/N` thumb)*
+Left side = app/window shortcuts (undo/cut/copy/paste, app switcher). Right side = arrow cluster.
+
+```
+┌─────┬─────┬─────┬─────┬─────┐   ┌─────┬─────┬─────┬─────┬─────┐
+│  ~  │  ⇥  │ Bsp │  ⏎  │  ⌃  │   │     │     │ ⌥␣  │     │     │
+├─────┼─────┼─────┼─────┼─────┤   ├─────┼─────┼─────┼─────┼─────┤
+│ ⌥␣  │ ⌘␣  │  ⇧  │  ⌘  │ ⌃⌥⌘ │   │  ←  │  ↓  │  ↑  │  →  │     │
+├─────┼─────┼─────┼─────┼─────┤   ├─────┼─────┼─────┼─────┼─────┤
+│ ⌘Z  │ ⌘X  │ ⌘C  │ ⌘V  │  ⌥  │   │     │     │     │     │     │
+└─────┴─────┴─────┴─────┴─────┘   └─────┴─────┴─────┴─────┴─────┘
+         ┌─────┐   ┌─────┬─────┐   ┌─────┬─────┐   ┌─────┐
+         │  ↻  │   │     │     │   │  ⇥  │     │   │  ↻  │
+         └─────┘   └─────┴─────┘   └─────┴─────┘   └─────┘
+```
+**Encoders** — Vol−/+ · Bri−/+
+
+### Layer Func — function keys & media  *(hold Func from Symb/Num)*
+F-keys on the left, media transport on the bottom-right. Reach Bluetooth via `→BT`.
+
+```
+┌──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┐
+│  F1  │  F2  │  F3  │  F4  │      │   │      │      │      │      │      │
+├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
+│  F5  │  F6  │  F7  │  F8  │      │   │      │      │      │      │      │
+├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
+│  F9  │ F10  │ F11  │ F12  │      │   │  🔇   │ Vol− │ Vol+ │      │      │
+└──────┴──────┴──────┴──────┴──────┘   └──────┴──────┴──────┴──────┴──────┘
+            ┌──────┐   ┌──────┬──────┐   ┌──────┬──────┐   ┌──────┐
+            │  ↻   │   │ →BT  │      │   │      │      │   │  ↻   │
+            └──────┘   └──────┴──────┘   └──────┴──────┘   └──────┘
+```
+**Encoders** — Vol−/+ · Bri−/+
+
+### Layer BT — bluetooth slots & unpair  *(→BT from Func)*
+Select a bluetooth slot (0–4), clear pairings (`BTclr`), or return to Base (`→Def`).
 
 ```
 ┌───────┬───────┬───────┬───────┬───────┐   ┌───────┬───────┬───────┬───────┬───────┐
-│  F1   │  F2   │  F3   │  F4   │  BT0  │   │  BT2  │ Out⊕  │ ⊕WIN  │   🔇  │   ⏮   │
+│       │       │       │       │       │   │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┤   ├───────┼───────┼───────┼───────┼───────┤
-│  F5   │  F6   │  F7   │  F8   │  BT1  │   │  BT3  │ Bri+  │  Std  │ Vol+  │   ⏯   │
+│  BT0  │  BT1  │  BT2  │  BT3  │  BT4  │   │       │       │       │       │       │
 ├───────┼───────┼───────┼───────┼───────┤   ├───────┼───────┼───────┼───────┼───────┤
-│  F9   │  F10  │  F11  │  F12  │ BTclr │   │  BT4  │ Bri−  │   ⏻   │ Vol−  │   ⏭   │
-└───────┴───────┴──────┴──────┴───────┘   └───────┴───────┴───────┴───────┴───────┘
-                ┌───────┬───────┬───────┐   ┌───────┬───────┬───────┐
-                │   🔇  │   ·   │   ·   │   │   ·   │   ·   │  Std  │
-                └───────┴───────┴───────┘   └───────┴───────┴───────┘
+│       │       │       │       │       │   │       │       │       │       │       │
+└───────┴───────┴───────┴───────┴───────┘   └───────┴───────┴───────┴───────┴───────┘
+              ┌───────┐   ┌───────┬───────┐   ┌───────┬───────┐   ┌───────┐
+              │   ↻   │   │ →Def  │ BTclr │   │ →Def  │       │   │   ↻   │
+              └───────┘   └───────┴───────┘   └───────┴───────┘   └───────┘
 ```
-**Encoders** — left: Vol− / Vol+ · right: Bri− / Bri+
+**Encoders** — Vol−/+ · Bri−/+
 
-### Layer MSE — mouse / trackpad
-**Toggled** with `⊕MSE` (on the SYM thumb) or the `⊕MSE` keys at the layer's outer edges.
+### Layer Mouse — trackpad & mouse  *(⊙MSE toggle)*
 Right half drives the trackpad (scroll + move); left half tunes pointer/scroll speed.
+Toggle back off with either `⊙MSE` key.
 
 ```
 ┌──────┬──────┬──────┬──────┬──────┐   ┌──────┬──────┬──────┬──────┬──────┐
-│ ⊕MSE │ MB4  │ Mclk │ MB5  │  ·   │   │ Sc←  │ Sc↓  │ Sc↑  │ Sc→  │ ⊕MSE │
+│ ⊙MSE │ MB4  │ Mclk │ MB5  │      │   │ Sc←  │ Sc↓  │ Sc↑  │ Sc→  │ ⊙MSE │
 ├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│  ·   │  ·   │  ·   │  ·   │  ·   │   │ Mv←  │ Mv↓  │ Mv↑  │ Mv→  │  ·   │
+│      │      │      │      │      │   │ Mv←  │ Mv↓  │ Mv↑  │ Mv→  │      │
 ├──────┼──────┼──────┼──────┼──────┤   ├──────┼──────┼──────┼──────┼──────┤
-│ Pf−  │ Pf+  │ Sf−  │ Sf+  │ Mod⊕ │   │  ·   │ MB4  │ Mclk │ MB5  │  ·   │
+│ Pf−  │ Pf+  │ Sf−  │ Sf+  │ Mod⊙ │   │      │ MB4  │ Mclk │ MB5  │      │
 └──────┴──────┴──────┴──────┴──────┘   └──────┴──────┴──────┴──────┴──────┘
-              ┌──────┬──────┬──────┐   ┌──────┬──────┬──────┐
-              │ P=0  │  ␣   │  ⇧   │   │ Lclk │ Rclk │ S=0  │
-              └──────┴──────┴──────┘   └──────┴──────┴──────┘
+            ┌──────┐   ┌──────┬──────┐   ┌──────┬──────┐   ┌──────┐
+            │  ↻   │   │  ␣   │  ⇧   │   │ Lclk │ Rclk │   │  ↻   │
+            └──────┘   └──────┴──────┘   └──────┴──────┘   └──────┘
 ```
-**Encoders** — left: pointer speed − / + · right: scroll speed − / +
+**Encoders** — pointer speed −/+ · scroll speed −/+
 
 ---
 
-## Combos (mouse chords)
+## Combos (Base layer only)
 
-Two-key chords active on **DEF, WIN, and MSE** layers (25 ms timeout, only after
-125 ms idle). These give you a full mouse without entering the MSE layer.
+Two-key chords on the **Base** layer (50 ms timeout). These give you Tab, Esc,
+modifiers, Backspace, and Enter without a dedicated key.
 
-| Press together | Result | |
+| Press together | Result | Fingers |
 |---|---|---|
-| `E` + `R` | Right click | `Rclk` |
-| `R` + `T` | Forward button | `MB5` |
-| `D` + `F` | Left click | `Lclk` |
-| `F` + `G` | Back button | `MB4` |
-| `C` + `V` | Middle click | `Mclk` |
+| `W` + `E` | `⇥` Tab | left ring + middle (top row) |
+| `S` + `D` | `⎋` Esc | left ring + middle (home row) |
+| `D` + `F` | `⌘` Left Cmd | left middle + index |
+| `N` + `K` | `⌘` Right Cmd | right |
+| `K` + `O` | `Bsp` Backspace | right |
+| `P` + Ctrl-key | `⏎` Enter | bottom row |
 
 ---
 
-## Encoders & trackpad at a glance
+## Encoders, trackpad & display at a glance
 
 ### Rotary encoders (2 × EC11)
-- **Wiring & enable** — defined in `boards/shields/sweep/sweep.dtsi`
-  (`left_encoder`, `right_encoder`, both on `gpio0 11` / `gpio1 0`, pull-up),
-  enabled per half in `sweep_left.overlay` / `sweep_right.overlay`.
-- **Resolution** — `triggers-per-rotation`: left = **15**, right = **45** (in `sweep.keymap`, `&sensors` block).
-- **Action per layer** — each layer's `sensor-bindings` line. Most layers =
-  volume (left) + brightness (right); the MSE layer remaps them to pointer/scroll speed.
+- **Wiring & enable** — `boards/shields/sweep/sweep.dtsi` (`left_encoder`,
+  `right_encoder`, pull-up), enabled per half in `sweep_left.overlay` /
+  `sweep_right.overlay`.
+- **Resolution** — `triggers-per-rotation`: left = **15**, right = **45**
+  (`sweep.keymap`, `&sensors` block).
+- **Action per layer** — each layer's `sensor-bindings` line. All corne-ported
+  layers = volume (left) + brightness (right); **Mouse** layer = pointer/scroll speed.
 
 ### Trackpad (Cirque Pinnacle II)
 - **Wiring & feel** — `boards/shields/sweep/sweep_right_trackpad.overlay`:
-  I²C `0x2a`, absolute mode, sensitivity `2x`, plus tap/drag, edge-motion, and
-  right-edge scroll tuning.
+  I²C `0x2a`, absolute mode, sensitivity `2x`, tap/drag, edge-motion, right-edge scroll.
 - **Pointer acceleration** — two input processors in `sweep.keymap`:
   `pointer_processor` (adaptive accel curve, 10–400%) and `drag_scroll_processor`.
 - **Driver config** — `config/sweep_right_trackpad.conf` (I²C, 4 KB input stack);
-  the **left** half (`config/sweep_left.conf`) actually processes pointer events
-  over the split and sends HID reports.
+  the **left** half (`config/sweep_left.conf`) processes pointer events over the split.
 
 ### E-ink display (SSD1680, 152×152)
-- **Wiring & timings** — `boards/shields/sweep/sweep_left_display_hw.overlay`
-  (SPI0, full + partial refresh LUTs).
-- **Driver / fonts** — `config/sweep_left_display_hw.conf` (SSD16XX, LVGL 1-bit,
-  Montserrat 12/14/16, custom trackpad-status widget).
-- **Graphics** — come from the external `zmk-vfx-sweep-pro-display` module.
+- **Wiring & timings** — `boards/shields/sweep/sweep_left_display_hw.overlay` (SPI0).
+- **Driver / fonts** — `config/sweep_left_display_hw.conf` (SSD16XX, LVGL 1-bit).
+- **Graphics** — from the external `zmk-vfx-sweep-pro-display` module.
 
 ---
 
@@ -233,17 +256,17 @@ Two-key chords active on **DEF, WIN, and MSE** layers (25 ms timeout, only after
 | Want to change… | Edit this |
 |---|---|
 | Which key does what | `config/sweep.keymap` → that layer's `bindings = < … >` |
-| Layer order / which is default | top `#define` block (`MAC` `WIN` `RIG` `LEF` `TRI` `MOUSE`) |
+| Layer order / which is default | top `#define` block (`BASE SYMB NUM NAV FUNC BT MOUSE`) |
+| Add home-row mods | bind `&hm MOD KEY` on Base alphas (behavior already defined) |
 | Encoder direction / pins | `boards/shields/sweep/sweep.dtsi` (`a-gpios` / `b-gpios`) |
 | Encoder resolution | `&sensors { … triggers-per-rotation }` in `sweep.keymap` |
 | What each encoder does | each layer's `sensor-bindings = < … >` |
-| Trackpad sensitivity / tap / scroll zone | `boards/shields/sweep/sweep_right_trackpad.overlay` |
+| Trackpad sensitivity / tap / scroll | `boards/shields/sweep/sweep_right_trackpad.overlay` |
 | Pointer speed / acceleration curve | `pointer_processor` / `drag_scroll_processor` in `sweep.keymap` |
-| E-ink wiring | `boards/shields/sweep/sweep_left_display_hw.overlay` |
-| E-ink fonts / refresh | `config/sweep_left_display_hw.conf` |
+| E-ink wiring / fonts | `sweep_left_display_hw.overlay` / `sweep_left_display_hw.conf` |
 | BLE power / sleep / battery / USB | `config/sweep.conf` |
 | Which features a build includes | `build.yaml` (shield combos) |
-| Custom external modules / versions | `config/west.yml` |
 
-> The diagrams in this file are generated, not hand-aligned. If you change the
-> keymap, regenerate them — see the formatting tooling alongside this repo.
+> The diagrams here are generated, not hand-aligned. If you change the keymap,
+> regenerate them from the formatter tooling alongside this repo. See
+> `CHOCOFY_CHANGES.md` for what this layout dropped vs the original Sweep config.

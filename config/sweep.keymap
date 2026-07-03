@@ -1,9 +1,8 @@
 // Copyright (c) 2022 The ZMK Contributors
 // SPDX-License-Identifier: MIT
-// #include <dt-bindings/zmk/rgb.h>
 
-#define ZMK_POINTING_DEFAULT_MOVE_VAL 2500// 600
-#define ZMK_POINTING_DEFAULT_SCRL_VAL 20// 10
+#define ZMK_POINTING_DEFAULT_MOVE_VAL 2500
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 20
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
@@ -14,14 +13,16 @@
 #include "behaviors/character_map.dtsi"
 #include "behaviors/report.dtsi"
 
+// Layers (ported from corne, MSE retained from sweep)
+#define BASE  0
+#define SYMB  1
+#define NUM   2
+#define NAV   3
+#define FUNC  4
+#define BT    5
+#define MOUSE 6
 
-#define MAC 0
-#define WIN 1
-#define RIG 2
-#define LEF 3
-#define TRI 4
-#define MOUSE 5
-
+// Pointer / Cirque mode tokens (used by the mouse layer)
 #define SPEED_POINTER 0
 #define SPEED_SCROLL 1
 #define SPEED_PREV 0
@@ -33,6 +34,10 @@
 #define CIRQUE_MODE_ABSOLUTE 1
 #define CIRQUE_MODE_TOGGLE 2
 
+// Sticky-key behavior (ported from corne; used by &sk LALT / &sk LCTRL in Base)
+&sk {
+	quick-release;
+};
 
 &sensors {
 	left_encoder {
@@ -63,7 +68,7 @@
 		max-percent = <400>;
 		initial-speed-position = <50>;
 	};
-	
+
 	drag_scroll_processor: drag_scroll_processor {
 		compatible = "zmk,input-processor-drag-scroll";
 		#input-processor-cells = <2>;
@@ -76,196 +81,191 @@
 		max-percent = <1000>;
 		initial-speed-position = <50>;
 	};
-	
+
 	behaviors {
+		/* Tap-hold behaviors ported from corne */
+		hm: homerow_mods {
+			compatible = "zmk,behavior-hold-tap";
+			#binding-cells = <2>;
+			tapping-term-ms = <175>;
+			quick-tap-ms = <0>;
+			flavor = "tap-preferred";
+			bindings = <&kp>, <&kp>;
+		};
+		hltk: holdlayer_tapkey {
+			compatible = "zmk,behavior-hold-tap";
+			#binding-cells = <2>;
+			tapping-term-ms = <175>;
+			quick-tap-ms = <0>;
+			flavor = "tap-preferred";
+			bindings = <&mo>, <&kp>;
+		};
+
+		/* Mouse / pointer behaviors (sweep) */
 		drgscrl: drag_scroll {
 			compatible = "zmk,behavior-drag-scroll";
 			#binding-cells = <0>;
 		};
-	
 		ptr_spd: pointing_speed {
 			compatible = "zmk,behavior-pointing-speed";
 			#binding-cells = <2>;
 		};
-
 		enc_ptr_spd: encoder_pointer_speed {
 			compatible = "zmk,behavior-sensor-rotate";
 			#sensor-binding-cells = <0>;
 			bindings = <&ptr_spd SPEED_POINTER SPEED_PREV>, <&ptr_spd SPEED_POINTER SPEED_NEXT>;
 		};
-
 		enc_scrl_spd: encoder_scroll_speed {
 			compatible = "zmk,behavior-sensor-rotate";
 			#sensor-binding-cells = <0>;
 			bindings = <&ptr_spd SPEED_SCROLL SPEED_PREV>, <&ptr_spd SPEED_SCROLL SPEED_NEXT>;
 		};
-
 		crq_mode: crqm {
 			compatible = "zmk,behavior-cirque-mode";
 			#binding-cells = <1>;
 		};
-
-		sel_x: select_x {
-			compatible = "zmk,behavior-hold-tap";
-			#binding-cells = <2>;
-			flavor = "tap-preferred";
-			tapping-term-ms = <200>;
-			quick-tap-ms = <150>;
-			require-prior-idle-ms = <125>;
-			bindings = <&mkp>, <&kp>;
-		};
-		
-		ds_z: drag_scroll_z {
-			compatible = "zmk,behavior-hold-tap";
-			#binding-cells = <2>;
-			flavor = "tap-preferred";
-			tapping-term-ms = <200>;
-			quick-tap-ms = <150>;
-			require-prior-idle-ms = <125>;
-			bindings = <&drgscrl>, <&kp>;
-		};
-
-		ht: hold_tap {
-			label = "hold_tap";
-			compatible = "zmk,behavior-hold-tap";
-			#binding-cells = <2>;
-			flavor = "balanced";
-			tapping-term-ms = <200>;
-			quick-tap-ms = <150>;
-			require-prior-idle-ms = <125>;
-			global-quick-tap;
-			bindings = <&kp>, <&kp>;
-		};
 		mmv {
-			acceleration-exponent = <1>;// 1
-			time-to-max-speed-ms = <300>;// 40
-			delay-ms = <0>;// 0
+			acceleration-exponent = <1>;
+			time-to-max-speed-ms = <300>;
+			delay-ms = <0>;
 		};
 		msc {
-			acceleration-exponent = <0>;// 0
-			time-to-max-speed-ms = <40>;// 500
-			delay-ms = <0>;// 10
-		};
-	};
-	
-	conditional_layers {
-		compatible = "zmk,conditional-layers";
-		
-		tri_layer {
-			if-layers = <RIG LEF>;
-			then-layer = <TRI>;
+			acceleration-exponent = <0>;
+			time-to-max-speed-ms = <40>;
+			delay-ms = <0>;
 		};
 	};
 
 	combos {
 		compatible = "zmk,combos";
 
-		combo_er_right_click {
-			timeout-ms = <25>;
-			require-prior-idle-ms = <125>;
-			key-positions = <2 3>;
-			layers = <MAC WIN MOUSE>;
-			bindings = <&mkp RCLK>;
+		// W + E (left ring + middle, top row)
+		combo_tab {
+			timeout-ms = <50>;
+			key-positions = <1 2>;
+			layers = <BASE>;
+			bindings = <&kp TAB>;
 		};
-
-		combo_rt_forward {
-			timeout-ms = <25>;
-			require-prior-idle-ms = <125>;
-			key-positions = <3 4>;
-			layers = <MAC WIN MOUSE>;
-			bindings = <&mkp MB5>;
+		// S + D (left ring + middle, home row)
+		combo_esc {
+			timeout-ms = <50>;
+			key-positions = <11 12>;
+			layers = <BASE>;
+			bindings = <&kp ESC>;
 		};
-
-		combo_df_left_click {
-			timeout-ms = <25>;
-			require-prior-idle-ms = <125>;
+		// D + F (left middle + index)
+		combo_lgui {
+			timeout-ms = <50>;
 			key-positions = <12 13>;
-			layers = <MAC WIN MOUSE>;
-			bindings = <&mkp LCLK>;
+			layers = <BASE>;
+			bindings = <&kp LGUI>;
 		};
-
-		combo_fg_back {
-			timeout-ms = <25>;
-			require-prior-idle-ms = <125>;
-			key-positions = <13 14>;
-			layers = <MAC WIN MOUSE>;
-			bindings = <&mkp MB4>;
+		// N + K (right)
+		combo_rgui {
+			timeout-ms = <50>;
+			key-positions = <16 17>;
+			layers = <BASE>;
+			bindings = <&kp RGUI>;
 		};
-
-		combo_cv_middle_click {
-			timeout-ms = <25>;
-			require-prior-idle-ms = <125>;
-			key-positions = <22 23>;
-			layers = <MAC WIN MOUSE>;
-			bindings = <&mkp MCLK>;
+		// K + O (right)
+		combo_backspace {
+			timeout-ms = <50>;
+			key-positions = <17 18>;
+			layers = <BASE>;
+			bindings = <&kp BSPC>;
+		};
+		// P + the Ctrl key to its right (bottom row)
+		combo_enter {
+			timeout-ms = <50>;
+			key-positions = <27 28>;
+			layers = <BASE>;
+			bindings = <&kp RET>;
 		};
 	};
-	
+
 	keymap {
 		compatible = "zmk,keymap";
-		
+
 		default_layer {
-			display-name = "DEF";
+			display-name = "Base";
 			bindings = <
-			&kp Q   &kp W       &kp E        &kp R        &kp T        &kp Y      &kp U        &kp I        &kp O       &kp P
-			&kp A   &ht LALT S  &ht LCTRL D  &ht LGUI F   &kp G         &kp H      &ht RGUI J   &ht RCTRL K  &ht RALT L  &kp BSPC
-			&ds_z 0 Z   &sel_x LCLK X       &kp C        &kp V        &kp B         &kp N      &kp M        &kp COMMA    &kp DOT     &kp ENTER
-			&kp C_MUTE  &lt LEF TAB  &kp LSHIFT    &kp SPACE  &lt RIG TAB   &studio_unlock
+			&kp Q &kp W &kp E &kp R &kp T    &kp Y &kp U &kp I &sk LALT  &kp BSPC
+			&kp A &kp S &kp D &kp F &kp G    &kp H &kp N &kp K &kp O     &kp L
+			&kp Z &kp X &kp C &kp V &kp B    &kp J &kp M &kp P &sk LCTRL &kp CAPS
+
+			&none &mo NUM &hltk NAV SPACE    &kp LSHFT &mo SYMB &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
-		
-		windows_layer {
-			display-name = "WIN";
+
+		symbs_layer {
+			display-name = "Symb";
 			bindings = <
-			&kp Q  &kp W       &kp E       &kp R        &kp T         &kp Y      &kp U        &kp I       &kp O       &kp P
-			&kp A  &ht LALT S  &ht LGUI D  &ht LCTRL F  &kp G         &kp H      &ht RCTRL J  &ht RGUI K  &ht RALT L  &kp BSPC
-			&ds_z 0 Z  &sel_x LCLK X       &kp C       &kp V        &kp B         &kp N      &kp M        &kp COMMA   &kp DOT     &kp ENTER
-			&kp C_MUTE  &lt LEF TAB  &kp LSHIFT     &kp SPACE &lt RIG TAB  &studio_unlock
+			&kp TILDE &kp AT    &kp PLUS  &kp CARET &none        &none    &kp DLLR  &kp EQUAL &kp COLON &none
+			&kp FSLH  &kp EXCL  &kp COMMA &kp DOT   &kp ASTRK    &kp HASH &kp DQT   &kp SQT   &kp PIPE  &kp SEMI
+			&kp BSLH  &kp UNDER &kp MINUS &kp AMPS  &none        &none    &kp PRCNT &kp QMARK &kp GRAVE &none
+
+			&none &mo FUNC &kp SPACE    &tog MOUSE &none &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
-		
-		right_layer {
-			display-name = "NUM";
+
+		numbrkt_layer {
+			display-name = "Num";
 			bindings = <
-			&kp N1   &kp N2    &kp N3     &kp N4   &kp N5     &kp N6  &kp N7    &kp N8     &kp N9     &kp N0
-			&kp DEL  &kp CAPS  &kp PSCRN  &kp INS  &trans     &kp LEFT  &kp DOWN   &kp UP  &kp RIGHT &trans
-			&trans   &trans    &trans     &trans   &trans     &kp HOME  &kp PG_DN  &kp PG_UP  &kp END &trans
-			&kp C_MUTE &trans   &kp ESC   &trans  &trans &studio_unlock
+			&kp PLUS     &kp N1 &kp N2 &kp N3 &kp COMMA    &none    &kp LT   &kp GT   &kp EQUAL &none
+			&kp N0       &kp N4 &kp N5 &kp N6 &kp DOT      &kp LBRC &kp LPAR &kp RPAR &kp RBRC  &kp LA(N)
+			&kp LS(LGUI) &kp N7 &kp N8 &kp N9 &kp MINUS    &none    &kp LBKT &kp RBKT &none     &none
+
+			&none &none &none    &none &mo FUNC &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
-		
-		left_layer {
-			display-name = "SYM";
+
+		nav_layer {
+			display-name = "Nav";
 			bindings = <
-			&kp EXCL  &kp AT    &kp HASH  &kp DLLR  &kp PRCNT    &kp CARET  &kp AMPS   &kp ASTRK  &kp GRAVE  &kp TILDE
-			&kp DQT   &kp LBKT  &kp LBRC  &kp LPAR  &default_report     &kp FSLH   &kp MINUS  &kp EQUAL  &kp COLON  &kp SEMI
-			&kp SQT   &kp RBKT  &kp RBRC  &kp RPAR  &trans   &kp BSLH   &kp UNDER  &kp PLUS   &kp PIPE   &kp QMARK
-			&kp C_MUTE &trans    &trans       &tog MOUSE     &trans  &studio_unlock
+			&kp TILDE     &kp TAB       &kp BSPC  &kp RET   &kp LCTRL           &none    &none    &kp LA(SPACE) &none     &none
+			&kp LA(SPACE) &kp LG(SPACE) &kp LSHFT &kp LGUI  &kp LC(LA(LGUI))    &kp LEFT &kp DOWN &kp UP        &kp RIGHT &none
+			&kp LG(Z)     &kp LG(X)     &kp LG(C) &kp LG(V) &kp LALT            &none    &none    &none         &none     &none
+
+			&none &none &none    &kp TAB &none &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
-		
-		tri_layer {
-			display-name = "FUN";
+
+		function_layer {
+			display-name = "Func";
 			bindings = <
-			&kp F1  &kp F2   &kp F3   &kp F4   &bt BT_SEL 0    &bt BT_SEL 2  &out OUT_TOG   &tog WIN  &kp C_MUTE    &kp C_PREV
-			&kp F5  &kp F6   &kp F7   &kp F8   &bt BT_SEL 1    &bt BT_SEL 3  &kp C_BRI_UP   &studio_unlock    &kp C_VOL_UP  &kp C_PP
-			&kp F9  &kp F10  &kp F11  &kp F12  &bt BT_CLR      &bt BT_SEL 4  &kp C_BRI_DEC  &soft_off     &kp C_VOL_DN  &kp C_NEXT
-			&kp C_MUTE  &trans   &trans          &trans        &trans  &studio_unlock
+			&kp F1 &kp F2  &kp F3  &kp F4  &none    &none      &none        &none        &none &none
+			&kp F5 &kp F6  &kp F7  &kp F8  &none    &none      &none        &none        &none &none
+			&kp F9 &kp F10 &kp F11 &kp F12 &none    &kp C_MUTE &kp C_VOL_DN &kp C_VOL_UP &none &none
+
+			&none &to BT &none    &none &none &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
-	
+
+		control_layer {
+			display-name = "BT";
+			bindings = <
+			&none        &none        &none        &none        &none           &none &none &none &none &none
+			&bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4    &none &none &none &none &none
+			&none        &none        &none        &none        &none           &none &none &none &none &none
+
+			&none &to BASE &bt BT_CLR    &none &to BASE &none
+			>;
+			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
+		};
+
 		mouse {
 			display-name = "MOUSE";
 			bindings = <
-			&tog MOUSE  &mkp MB4  &mkp MCLK  &mkp MB5   &trans      &msc SCRL_LEFT     &msc SCRL_DOWN    &msc SCRL_UP     &msc SCRL_RIGHT    &tog MOUSE
-			&trans      &trans    &trans     &trans     &trans      &mmv MOVE_LEFT     &mmv MOVE_DOWN    &mmv MOVE_UP     &mmv MOVE_RIGHT    &trans
-			&ptr_spd SPEED_POINTER SPEED_FINE_PREV  &ptr_spd SPEED_POINTER SPEED_FINE_NEXT  &ptr_spd SPEED_SCROLL SPEED_FINE_PREV  &ptr_spd SPEED_SCROLL SPEED_FINE_NEXT  &crq_mode CIRQUE_MODE_TOGGLE        &trans     &mkp MB4  &mkp MCLK  &mkp MB5  &trans
-			&ptr_spd SPEED_POINTER SPEED_RESET &kp SPACE  &kp LSHIFT  &mkp LCLK  &mkp RCLK &ptr_spd SPEED_SCROLL SPEED_RESET
+			&tog MOUSE                             &mkp MB4                               &mkp MCLK                             &mkp MB5                              &trans                          &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &tog MOUSE
+			&trans                                 &trans                                 &trans                                &trans                                &trans                          &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &trans
+			&ptr_spd SPEED_POINTER SPEED_FINE_PREV &ptr_spd SPEED_POINTER SPEED_FINE_NEXT &ptr_spd SPEED_SCROLL SPEED_FINE_PREV &ptr_spd SPEED_SCROLL SPEED_FINE_NEXT &crq_mode CIRQUE_MODE_TOGGLE    &trans         &mkp MB4       &mkp MCLK    &mkp MB5        &trans
+
+			&none &kp SPACE &kp LSHIFT    &mkp LCLK &mkp RCLK &none
 			>;
 			sensor-bindings = <&enc_ptr_spd &enc_scrl_spd>;
 		};
