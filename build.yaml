@@ -23,3 +23,4 @@ include:
   artifact-name: sweep_right_trackpad
 - board: nice_nano//zmk
   shield: settings_reset
+  artifact-name: settings_reset

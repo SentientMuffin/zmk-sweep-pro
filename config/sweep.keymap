@@ -211,7 +211,7 @@
 		};
 
 		numbrkt_layer {
-			display-name = "Num";
+			display-name = "Numb";
 			bindings = <
 			&kp PLUS     &kp N1 &kp N2 &kp N3 &kp COMMA    &none    &kp LT   &kp GT   &kp EQUAL &none
 			&kp N0       &kp N4 &kp N5 &kp N6 &kp DOT      &kp LBRC &kp LPAR &kp RPAR &kp RBRC  &kp LA(N)
@@ -223,7 +223,7 @@
 		};
 
 		nav_layer {
-			display-name = "Nav";
+			display-name = "Navi";
 			bindings = <
 			&kp TILDE     &kp TAB       &kp BSPC  &kp RET   &kp LCTRL           &none    &none    &kp LA(SPACE) &none     &none
 			&kp LA(SPACE) &kp LG(SPACE) &kp LSHFT &kp LGUI  &kp LC(LA(LGUI))    &kp LEFT &kp DOWN &kp UP        &kp RIGHT &none
@@ -247,7 +247,7 @@
 		};
 
 		control_layer {
-			display-name = "BT";
+			display-name = "Blth";
 			bindings = <
 			&none        &none        &none        &none        &none           &none &none &none &none &none
 			&bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4    &none &none &none &none &none
@@ -259,7 +259,7 @@
 		};
 
 		mouse {
-			display-name = "MOUSE";
+			display-name = "Mous";
 			bindings = <
 			&tog MOUSE                             &mkp MB4                               &mkp MCLK                             &mkp MB5                              &trans                          &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &tog MOUSE
 			&trans                                 &trans                                 &trans                                &trans                                &trans                          &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &trans
