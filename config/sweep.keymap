@@ -144,7 +144,7 @@
 			key-positions = <0 1>;
 			layers = <BASE>;
 			bindings = <&to MOUSE>;
-    }
+    };
 		// W + E (left ring + middle, top row)
 		combo_tab {
 			timeout-ms = <50>;
