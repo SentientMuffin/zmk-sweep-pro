@@ -17,10 +17,10 @@
 #define BASE  0
 #define SYMB  1
 #define NUM   2
-#define NAV   3
-#define FUNC  4
-#define BT    5
-#define MOUSE 6
+#define FUNC  3
+#define NAV   4
+#define MOUSE 5
+#define BT    6
 
 // Pointer / Cirque mode tokens (used by the mouse layer)
 #define SPEED_POINTER 0
@@ -138,10 +138,10 @@
 
 	combos {
 		compatible = "zmk,combos";
-    // Q + W 
+    // W + R 
     combo_mouse {
 			timeout-ms = <50>;
-			key-positions = <0 1>;
+			key-positions = <1 3>;
 			layers = <BASE>;
 			bindings = <&to MOUSE>;
     };
@@ -159,6 +159,12 @@
 			layers = <BASE>;
 			bindings = <&kp ESC>;
 		};
+    combo_exit {
+ 			timeout-ms = <50>;
+			key-positions = <11 12>;
+			layers = <MOUSE>;
+			bindings = <&tog MOUSE>;
+   };
 		// D + F (left middle + index)
 		combo_lgui {
 			timeout-ms = <50>;
@@ -235,18 +241,6 @@
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
 
-		nav_layer {
-			display-name = "Navi";
-			bindings = <
-			&kp TILDE     &kp TAB       &kp BSPC  &kp RET   &kp LCTRL           &none    &none    &kp LA(SPACE) &none     &none
-			&kp LA(SPACE) &kp LG(SPACE) &kp LSHFT &kp LGUI  &kp LC(LA(LGUI))    &kp LEFT &kp DOWN &kp UP        &kp RIGHT &none
-			&kp LG(Z)     &kp LG(X)     &kp LG(C) &kp LG(V) &kp LALT            &none    &none    &none         &none     &none
-
-			&none &none &none    &kp TAB &none &none
-			>;
-			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
-		};
-
 		function_layer {
 			display-name = "Func";
 			bindings = <
@@ -255,6 +249,31 @@
 			&kp F9 &kp F10 &kp F11 &kp F12 &none    &none      &none         &none        &none &none
 
 			&none &none &none    &none &none &none
+			>;
+			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
+		};
+
+		mouse {
+			display-name = "Mous";
+			bindings = <
+			&none  &msc SCRL_LEFT &msc SCRL_UP   &msc SCRL_RIGHT &mkp MCLK      &none          &none          &none        &none           &tog MOUSE
+			&none  &mkp MCLK      &mkp RCLK      &mkp LCLK       &none          &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &none
+			&none  &none          &msc SCRL_DOWN &none           &none          &trans         &mkp MB4       &mkp MCLK    &mkp MB5        &crq_mode CIRQUE_MODE_TOGGLE
+
+			&none &tog MOUSE &hltk NAV SPACE    &none &tog MOUSE &none
+			/* &none &kp SPACE &kp LSHIFT    &mkp LCLK &mkp RCLK &none */
+			>;
+			sensor-bindings = <&enc_ptr_spd &enc_scrl_spd>;
+		};
+
+		nav_layer {
+			display-name = "Navi";
+			bindings = <
+			&kp TILDE     &kp TAB       &kp BSPC  &kp RET   &kp LCTRL           &none    &none    &kp LA(SPACE) &none     &none
+			&kp LA(SPACE) &kp LG(SPACE) &kp LSHFT &kp LGUI  &kp LC(LA(LGUI))    &kp LEFT &kp DOWN &kp UP        &kp RIGHT &none
+			&kp LG(Z)     &kp LG(X)     &kp LG(C) &kp LG(V) &kp LALT            &none    &none    &none         &none     &none
+
+			&none &none &none    &kp TAB &none &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
@@ -269,19 +288,6 @@
 			&none &to BASE &bt BT_CLR    &none &to BASE &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
-		};
-
-		mouse {
-			display-name = "Mous";
-			bindings = <
-			&none  &msc SCRL_LEFT &msc SCRL_UP   &msc SCRL_RIGHT &none          &none          &none          &none        &none           &tog MOUSE
-			&none  &mkp LCLK      &mkp MCLK      &mkp RCLK       &none          &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &none
-			&none  &none          &msc SCRL_DOWN &none           &none          &trans         &mkp MB4       &mkp MCLK    &mkp MB5        &crq_mode CIRQUE_MODE_TOGGLE
-
-			&none &tog MOUSE &hltk NAV SPACE    &none &tog MOUSE &none
-			/* &none &kp SPACE &kp LSHIFT    &mkp LCLK &mkp RCLK &none */
-			>;
-			sensor-bindings = <&enc_ptr_spd &enc_scrl_spd>;
 		};
 	};
 };
