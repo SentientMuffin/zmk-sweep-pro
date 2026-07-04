@@ -138,7 +138,13 @@
 
 	combos {
 		compatible = "zmk,combos";
-
+    // Q + W 
+    combo_mouse {
+			timeout-ms = <50>;
+			key-positions = <0 1>;
+			layers = <BASE>;
+			bindings = <&to MOUSE>;
+    }
 		// W + E (left ring + middle, top row)
 		combo_tab {
 			timeout-ms = <50>;
@@ -159,6 +165,13 @@
 			key-positions = <12 13>;
 			layers = <BASE>;
 			bindings = <&kp LGUI>;
+		};
+		// S + F (left ring + index)
+		combo_laspace {
+			timeout-ms = <50>;
+			key-positions = <11 13>;
+			layers = <BASE>;
+			bindings = <&kp LA(SPACE)>;
 		};
 		// N + K (right)
 		combo_rgui {
@@ -201,11 +214,11 @@
 		symbs_layer {
 			display-name = "Symb";
 			bindings = <
-			&kp TILDE &kp AT    &kp PLUS  &kp CARET &none        &none    &kp DLLR  &kp EQUAL &kp COLON &none
-			&kp FSLH  &kp EXCL  &kp COMMA &kp DOT   &kp ASTRK    &kp HASH &kp DQT   &kp SQT   &kp PIPE  &kp SEMI
-			&kp BSLH  &kp UNDER &kp MINUS &kp AMPS  &none        &none    &kp PRCNT &kp QMARK &kp GRAVE &none
+			&kp TILDE &kp AT    &kp PLUS  &kp CARET &none        &none      &kp DLLR  &kp EQUAL &kp COLON &none
+			&kp FSLH  &kp EXCL  &kp COMMA &kp DOT   &kp ASTRK    &kp HASH   &kp DQT   &kp SQT   &kp PIPE  &kp SEMI
+			&kp BSLH  &kp UNDER &kp MINUS &kp AMPS  &none        &tog MOUSE &kp PRCNT &kp QMARK &kp GRAVE &none
 
-			&none &mo FUNC &kp SPACE    &tog MOUSE &none &none
+			&none &mo FUNC &kp SPACE    &none &none &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
@@ -213,7 +226,7 @@
 		numbrkt_layer {
 			display-name = "Numb";
 			bindings = <
-			&kp PLUS     &kp N1 &kp N2 &kp N3 &kp COMMA    &none    &kp LT   &kp GT   &kp EQUAL &none
+			&to MOUSE    &kp N1 &kp N2 &kp N3 &kp COMMA    &none    &kp LT   &kp GT   &kp EQUAL &none
 			&kp N0       &kp N4 &kp N5 &kp N6 &kp DOT      &kp LBRC &kp LPAR &kp RPAR &kp RBRC  &kp LA(N)
 			&kp LS(LGUI) &kp N7 &kp N8 &kp N9 &kp MINUS    &none    &kp LBKT &kp RBKT &none     &none
 
@@ -237,11 +250,11 @@
 		function_layer {
 			display-name = "Func";
 			bindings = <
-			&kp F1 &kp F2  &kp F3  &kp F4  &none    &none      &none        &none        &none &none
-			&kp F5 &kp F6  &kp F7  &kp F8  &none    &none      &none        &none        &none &none
-			&kp F9 &kp F10 &kp F11 &kp F12 &none    &kp C_MUTE &kp C_VOL_DN &kp C_VOL_UP &none &none
+			&kp F1 &kp F2  &kp F3  &kp F4  &none    &none      &kp C_BRI_DEC &kp C_BRI_UP &none &to BT
+			&kp F5 &kp F6  &kp F7  &kp F8  &none    &kp C_MUTE &kp C_VOL_DN  &kp C_VOL_UP &none &none
+			&kp F9 &kp F10 &kp F11 &kp F12 &none    &none      &none         &none        &none &none
 
-			&none &to BT &none    &none &none &none
+			&none &none &none    &none &none &none
 			>;
 			sensor-bindings = <&inc_dec_kp C_VOL_DN C_VOL_UP &inc_dec_kp C_BRI_DEC C_BRI_UP>;
 		};
@@ -249,8 +262,8 @@
 		control_layer {
 			display-name = "Blth";
 			bindings = <
-			&none        &none        &none        &none        &none           &none &none &none &none &none
-			&bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4    &none &none &none &none &none
+			&none        &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &none           &none &none &none &none &none
+			&bt BT_SEL 0 &bt BT_SEL 4 &none        &none        &none           &none &none &none &none &none
 			&none        &none        &none        &none        &none           &none &none &none &none &none
 
 			&none &to BASE &bt BT_CLR    &none &to BASE &none
@@ -261,11 +274,12 @@
 		mouse {
 			display-name = "Mous";
 			bindings = <
-			&tog MOUSE                             &mkp MB4                               &mkp MCLK                             &mkp MB5                              &trans                          &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &tog MOUSE
-			&trans                                 &trans                                 &trans                                &trans                                &trans                          &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &trans
-			&ptr_spd SPEED_POINTER SPEED_FINE_PREV &ptr_spd SPEED_POINTER SPEED_FINE_NEXT &ptr_spd SPEED_SCROLL SPEED_FINE_PREV &ptr_spd SPEED_SCROLL SPEED_FINE_NEXT &crq_mode CIRQUE_MODE_TOGGLE    &trans         &mkp MB4       &mkp MCLK    &mkp MB5        &trans
+			&none  &msc SCRL_LEFT &msc SCRL_UP   &msc SCRL_RIGHT &none          &none          &none          &none        &none           &tog MOUSE
+			&none  &mkp LCLK      &mkp MCLK      &mkp RCLK       &none          &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &none
+			&none  &none          &msc SCRL_DOWN &none           &none          &trans         &mkp MB4       &mkp MCLK    &mkp MB5        &crq_mode CIRQUE_MODE_TOGGLE
 
-			&none &kp SPACE &kp LSHIFT    &mkp LCLK &mkp RCLK &none
+			&none &tog MOUSE &hltk NAV SPACE    &none &tog MOUSE &none
+			/* &none &kp SPACE &kp LSHIFT    &mkp LCLK &mkp RCLK &none */
 			>;
 			sensor-bindings = <&enc_ptr_spd &enc_scrl_spd>;
 		};
