@@ -18,8 +18,8 @@
 #define SYMB  1
 #define NUM   2
 #define FUNC  3
-#define NAV   4
-#define MOUSE 5
+#define MOUSE 4
+#define NAV   5
 #define BT    6
 
 // Pointer / Cirque mode tokens (used by the mouse layer)
