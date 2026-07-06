@@ -212,7 +212,7 @@
 			bindings = <
 			&kp Q &kp W          &kp E &kp R &kp T    &kp Y                &kp U &kp I &sk LALT  &kp BSPC
 			&kp A &kp S          &kp D &kp F &kp G    &kp H                &kp N &kp K &kp O     &kp L
-			&kp Z &hltk XDrive X &kp C &kp V &kp B    &kp J &hltk MDrive M &kp P &sk LCTRL &kp CAPS
+			&kp Z &hltk XDRIVE X &kp C &kp V &kp B    &kp J &hltk MDRIVE M &kp P &sk LCTRL &kp CAPS
 
 			&none &mo NUM &hltk NAV SPACE    &kp LSHFT &mo SYMB &none
 			>;
